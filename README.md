@@ -12,6 +12,9 @@ Repositório de exercícios práticos para quem está começando em Inteligênci
   - `scripts/`: script Python mínimo para rodar localmente
   - `requirements.txt`: dependências específicas da aula
 
+- `slides/`: materiais de aula
+  - `pandas.tex`: slides de introdução ao Pandas
+
 ### Como usar
 
 1) Ambiente local (recomendado):
@@ -28,6 +31,12 @@ Repositório de exercícios práticos para quem está começando em Inteligênci
 **Exercício 1: Meu Primeiro Modelo**
 
 Clique [aqui](./modulo-1/exercicio-01/) para ver este exercício.
+
+### Materiais de Apoio
+
+- **Slides – Introdução ao Pandas**: [Baixar PDF](./slides/pandas.pdf) · [Fonte LaTeX](./slides/pandas.tex)
+- **Introdução ao Python (slides e exercícios)**: [Acessar repositório](https://github.com/claudioscheer/exercicios-iniciantes-python)
+- **Exercícios de Matplotlib (gráficos)**: [Acessar repositório](https://github.com/claudioscheer/exercicios-iniciantes-matplotlib)
 
 ### Licença
 

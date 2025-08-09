@@ -17,7 +17,7 @@
 \usepackage{listingsutf8}
 \usepackage{ulem}
 % Habilita Unicode em metadados (bookmarks etc.)
-\hypersetup{unicode=true}
+\hypersetup{unicode=true, colorlinks=true, linkcolor=white, urlcolor=blue, citecolor=white}
 
 % Cor mais visível para texto monoespaçado inline (\texttt{...})
 \definecolor{ttcolor}{RGB}{0,51,153} % azul mais forte
@@ -165,12 +165,12 @@ dados = {
     'Cidade': ['SP', 'RJ', 'BH', 'SP'],
     'Salario': [5000, 6000, 5500, 7000]
 }
-df = pd.DataFrame(dados)
-print(df.head())
+df = pd.DataFrame(dados)  # criar DataFrame
+print(df.head())          # visualizar primeiras linhas
 
 # a partir de lista de listas
 dados_lista = [['Ana', 25, 'SP'], ['João', 30, 'RJ']]
-df2 = pd.DataFrame(dados_lista, columns=['Nome','Idade','Cidade'])
+df2 = pd.DataFrame(dados_lista, columns=['Nome','Idade','Cidade'])  # DataFrame com colunas
 \end{lstlisting}
 \end{frame}
 
@@ -249,9 +249,9 @@ df_faltantes.fillna(method='ffill')
 
 \begin{frame}[fragile]{Duplicatas, Renomear e Tipos}
 \begin{lstlisting}
-df_dup = pd.DataFrame({'Nome':['Ana','João','Ana'], 'Idade':[25,30,25]})
-df_dup.duplicated()
-df_dup.drop_duplicates()
+df_dup = pd.DataFrame({'Nome':['Ana','João','Ana'], 'Idade':[25,30,25]})  # dados com repetição
+df_dup.duplicated()    # identificar duplicatas (True/False)
+df_dup.drop_duplicates()  # remover duplicatas
 
 # renomear
 df_renomeado = df.rename(columns={'Nome':'NomeCompleto', 'Idade':'Anos'})
@@ -288,29 +288,29 @@ df.sort_index()
 
 \begin{frame}[fragile]{Agrupamento e Agregação}
 \begin{lstlisting}
-df_vendas = pd.DataFrame({
+df_vendas = pd.DataFrame({  # exemplo de vendas
   'Vendedor':['Ana','João','Ana','João','Maria','Maria'],
   'Produto':['A','A','B','B','A','B'],
   'Quantidade':[10,15,20,25,30,35],
   'Valor':[100,150,200,250,300,350]
 })
 
-g = df_vendas.groupby('Vendedor')
-g.sum()
-g.mean()
+g = df_vendas.groupby('Vendedor')  # agrupar por vendedor
+g.sum()    # somar por grupo
+g.mean()   # média por grupo
 
 # múltiplas agregações
-agg = df_vendas.groupby('Vendedor').agg({'Quantidade':'sum', 'Valor':['mean','sum']})
+agg = df_vendas.groupby('Vendedor').agg({'Quantidade':'sum', 'Valor':['mean','sum']})  # agregações
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Pivot Table}
 \begin{lstlisting}
-pivot = df_vendas.pivot_table(
+pivot = df_vendas.pivot_table(  # tabela dinâmica (pivot)
   values='Valor', index='Vendedor', columns='Produto',
   aggfunc='sum', fill_value=0
 )
-print(pivot)
+print(pivot)  # visualizar pivot
 \end{lstlisting}
 \end{frame}
 
@@ -318,50 +318,50 @@ print(pivot)
 \begin{lstlisting}
 import matplotlib.pyplot as plt
 
-df_plot = pd.DataFrame({
+df_plot = pd.DataFrame({  # dados para plotagem
   'Mes':['Jan','Fev','Mar','Abr','Mai'],
   'Vendas':[100,120,140,110,160],
   'Custos':[ 80, 90,100, 85,110]
 })
 
-df_plot.plot(x='Mes', y='Vendas', kind='line')
+df_plot.plot(x='Mes', y='Vendas', kind='line')  # gráfico de linha
 plt.title('Vendas Mensais')
-plt.show()
+plt.show()  # mostrar gráfico
 
-df_plot.plot(x='Mes', y=['Vendas','Custos'], kind='bar')
+df_plot.plot(x='Mes', y=['Vendas','Custos'], kind='bar')  # gráfico de barras
 plt.title('Vendas vs Custos')
-plt.show()
+plt.show()  # mostrar gráfico
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Merge, Join e Concat}
 \begin{lstlisting}
 # concatenação
-df1 = pd.DataFrame({'A':[1,2], 'B':[3,4]})
-df2 = pd.DataFrame({'A':[5,6], 'B':[7,8]})
-pd.concat([df1, df2], ignore_index=True)
+df1 = pd.DataFrame({'A':[1,2], 'B':[3,4]})  # primeiro DataFrame
+df2 = pd.DataFrame({'A':[5,6], 'B':[7,8]})  # segundo DataFrame
+pd.concat([df1, df2], ignore_index=True)     # concatenar linhas
 
 # junção (merge)
-esq = pd.DataFrame({'ID':[1,2,3], 'Nome':['Ana','João','Maria']})
-dir = pd.DataFrame({'ID':[1,2,4], 'Salario':[5000,6000,7000]})
+esq = pd.DataFrame({'ID':[1,2,3], 'Nome':['Ana','João','Maria']})  # tabela à esquerda
+dir = pd.DataFrame({'ID':[1,2,4], 'Salario':[5000,6000,7000]})     # tabela à direita
 
-pd.merge(esq, dir, on='ID')            # inner
-pd.merge(esq, dir, on='ID', how='left')
-pd.merge(esq, dir, on='ID', how='outer')
+pd.merge(esq, dir, on='ID')            # inner join
+pd.merge(esq, dir, on='ID', how='left')  # left join
+pd.merge(esq, dir, on='ID', how='outer') # outer join
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Trabalhando com Datas}
 \begin{lstlisting}
-datas = pd.date_range('2024-01-01', periods=10, freq='D')
-df_tempo = pd.DataFrame({'Data': datas, 'Valor': range(100, 110)})
-df_tempo.set_index('Data', inplace=True)
+datas = pd.date_range('2024-01-01', periods=10, freq='D')  # criar datas diárias
+df_tempo = pd.DataFrame({'Data': datas, 'Valor': range(100, 110)})  # DataFrame temporal
+df_tempo.set_index('Data', inplace=True)  # usar Data como índice
 
 df_tempo.resample('W').mean()     # média semanal
-df_tempo.rolling(window=3).mean() # média móvel
+df_tempo.rolling(window=3).mean() # média móvel (3 períodos)
 
-df_tempo['Ano'] = df_tempo.index.year
-df_tempo['Mes'] = df_tempo.index.month
+df_tempo['Ano'] = df_tempo.index.year   # extrair ano
+df_tempo['Mes'] = df_tempo.index.month  # extrair mês
 \end{lstlisting}
 \end{frame}
 
@@ -382,10 +382,10 @@ df.query('col1 > 10 and col2 < 20')
 \begin{frame}{Recursos Úteis}
   \small
   \begin{itemize}
-    \item Documentação Oficial: \href{https://pandas.pydata.org}{pandas.pydata.org}
-    \item 10 Minutes to Pandas: \href{https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html}{tutorial rápido}
-    \item Cheat Sheet: \href{https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf}{referência rápida}
-    \item Kaggle Learn: \href{https://www.kaggle.com/learn/pandas}{cursos práticos}
+    \item Documentação Oficial: \href{https://pandas.pydata.org}{pandas.pydata.org} (\url{https://pandas.pydata.org})
+    \item 10 Minutes to Pandas: \href{https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html}{tutorial rápido} (\url{https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html})
+    \item Cheat Sheet: \href{https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf}{referência rápida} (\url{https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf})
+    \item Kaggle Learn: \href{https://www.kaggle.com/learn/pandas}{cursos práticos} (\url{https://www.kaggle.com/learn/pandas})
   \end{itemize}
 \end{frame}
 
