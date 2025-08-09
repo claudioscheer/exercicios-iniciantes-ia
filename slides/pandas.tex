@@ -1,0 +1,407 @@
+\PassOptionsToPackage{unicode}{hyperref}
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{ulem}
+% Habilita Unicode em metadados (bookmarks etc.)
+\hypersetup{unicode=true}
+
+% Cor mais visível para texto monoespaçado inline (\texttt{...})
+\definecolor{ttcolor}{RGB}{0,51,153} % azul mais forte
+\DeclareTextFontCommand{\textttblue}{\ttfamily\color{ttcolor}}
+\DeclareTextFontCommand{\textttwhite}{\ttfamily\color{white}}
+\let\texttt\textttblue
+
+% Usar branco para \texttt em títulos de slides (frametitle e framesubtitle)
+\makeatletter
+\addtobeamertemplate{frametitle}{\begingroup\let\texttt\textttwhite}{\endgroup}
+\addtobeamertemplate{framesubtitle}{\begingroup\let\texttt\textttwhite}{\endgroup}
+\makeatother
+
+\lstdefinestyle{py}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!70!black},
+  commentstyle=\color{gray!70!black},
+  stringstyle=\color{teal!60!black},
+  showstringspaces=false,
+  frame=single,
+  rulecolor=\color{black!15},
+  numbers=left,
+  numberstyle=\tiny\color{gray!80!black},
+  numbersep=8pt,
+  tabsize=2,
+  columns=fullflexible,
+  keepspaces=true,
+  upquote=true,
+  breaklines=true,
+  breakatwhitespace=true,
+  xleftmargin=2em,
+  framexleftmargin=2em,
+  framexrightmargin=0em
+}
+\lstset{
+  style=py,
+  inputencoding=utf8,
+  literate=
+    {á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1
+    {é}{{\'e}}1 {ê}{{\^e}}1
+    {í}{{\'\i}}1
+    {ó}{{\'o}}1 {ô}{{\^o}}1 {õ}{{\~o}}1
+    {ú}{{\'u}}1 {ü}{{\"u}}1
+    {ç}{{\c c}}1
+    {Á}{{\'A}}1 {À}{{\`A}}1 {Ã}{{\~A}}1 {Â}{{\^A}}1
+    {É}{{\'E}}1 {Ê}{{\^E}}1
+    {Í}{{\'I}}1
+    {Ó}{{\'O}}1 {Ô}{{\^O}}1 {Õ}{{\~O}}1
+    {Ú}{{\'U}}1 {Ü}{{\"U}}1
+    {Ç}{{\c C}}1
+}
+
+\title{Pandas: Guia Básico}
+\subtitle{Do básico ao essencial}
+\author{Claudio Scheer}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{\texttt{pandas}: o que é?}
+  \begin{itemize}
+    \item Biblioteca de código aberto para \textbf{análise e manipulação} de dados
+    \item Estruturas principais: \textbf{Series} (1D) e \textbf{DataFrame} (2D)
+    \item Integração com \texttt{Matplotlib} e o ecossistema Python
+    \item Leitura/escrita em vários formatos: CSV, Excel, JSON, SQL
+    \item Ferramentas para limpeza, seleção, agrupamento e agregação
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{\textbf{Índice}}
+  \large
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{enumerate}
+        \item O que é Pandas?
+        \item Instalação e Importação
+        \item Estruturas: Series e DataFrame
+        \item Operações Básicas
+        \item Leitura e Escrita (CSV/Excel/JSON)
+        \item Seleção e Filtragem
+        \item Limpeza de Dados
+      \end{enumerate}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{enumerate}
+        \setcounter{enumi}{7}
+        \item Operações com Dados
+        \item Agrupamento e Agregação
+        \item Visualização
+        \item Merge/Join/Concat
+        \item Datas
+        \item Dicas e Recursos
+        \item Exercícios
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Instalação e Importação}
+\begin{lstlisting}[language=sh]
+# via pip
+pip install pandas
+
+# via conda
+conda install pandas
+\end{lstlisting}
+\vspace{0.4em}
+\begin{lstlisting}
+import pandas as pd
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Series (1D)}
+  \begin{block}{Ideia}
+    Uma \textbf{Series} é como uma coluna de valores com um índice.
+  \end{block}
+\begin{lstlisting}
+# Series simples
+numeros = pd.Series([10, 20, 30, 40, 50])
+print(numeros)
+
+# índice personalizado
+frutas = pd.Series(['Maçã', 'Banana', 'Laranja'], index=['a','b','c'])
+print(frutas)
+
+# a partir de dicionário
+vendas = pd.Series({'Jan': 1000, 'Fev': 1500, 'Mar': 1200})
+print(vendas['Jan'])  # 1000
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{DataFrame (2D)}
+  \begin{block}{Ideia}
+    Um \textbf{DataFrame} é como uma planilha: linhas e colunas com rótulos.
+  \end{block}
+\begin{lstlisting}
+dados = {
+    'Nome': ['Ana', 'João', 'Maria', 'Pedro'],
+    'Idade': [25, 30, 28, 35],
+    'Cidade': ['SP', 'RJ', 'BH', 'SP'],
+    'Salario': [5000, 6000, 5500, 7000]
+}
+df = pd.DataFrame(dados)
+print(df.head())
+
+# a partir de lista de listas
+dados_lista = [['Ana', 25, 'SP'], ['João', 30, 'RJ']]
+df2 = pd.DataFrame(dados_lista, columns=['Nome','Idade','Cidade'])
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Operações Básicas}
+\begin{lstlisting}
+df.head()      # primeiras linhas
+df.tail()      # últimas linhas
+df.info()      # tipos e memória
+df.shape       # (linhas, colunas)
+df.columns     # nomes das colunas
+df.index       # índice das linhas
+df.dtypes      # tipos por coluna
+\end{lstlisting}
+\vspace{0.4em}
+\begin{lstlisting}
+df_num = pd.DataFrame({
+  'Vendas':[100,150,200,180,220],
+  'Custos':[ 50, 70, 90, 85,100]
+})
+df_num.describe()  # contagem, média, desvio, min, quartis, max
+df_num.mean()      # médias por coluna
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Leitura e Escrita}
+\begin{lstlisting}
+# leitura
+df_csv   = pd.read_csv('arquivo.csv')
+df_excel = pd.read_excel('arquivo.xlsx')
+df_json  = pd.read_json('arquivo.json')
+
+# escrita
+df.to_csv('saida.csv', index=False)
+df.to_excel('saida.xlsx', index=False)
+df.to_json('saida.json', orient='records')
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Seleção e Filtragem}
+\begin{lstlisting}
+# colunas
+idades = df['Idade']
+subconjunto = df[['Nome','Salario']]
+
+# linhas por posição / rótulo
+df.iloc[0]       # primeira linha
+df.loc[0:2]      # linhas 0 a 2 (inclusivo)
+
+# por condição
+maiores_30 = df[df['Idade'] > 30]
+sp_jovens = df[(df['Cidade'] == 'SP') & (df['Idade'] < 30)]
+
+# avançado
+df.loc[0:2, ['Nome','Idade']]
+df.query('Idade > 25 and Salario < 6000')
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Limpeza de Dados}
+\begin{lstlisting}
+df_faltantes = pd.DataFrame({
+  'A':[1,2,float('nan'),4],
+  'B':[5,float('nan'),float('nan'),8]
+})
+
+df_faltantes.isnull().sum()   # contar NaN por coluna
+df_faltantes.dropna()         # remover linhas com NaN
+df_faltantes.dropna(axis=1)   # remover colunas com NaN
+
+# preencher
+df_faltantes.fillna(0)
+df_faltantes.fillna(df_faltantes.mean(numeric_only=True))
+df_faltantes.fillna(method='ffill')
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Duplicatas, Renomear e Tipos}
+\begin{lstlisting}
+df_dup = pd.DataFrame({'Nome':['Ana','João','Ana'], 'Idade':[25,30,25]})
+df_dup.duplicated()
+df_dup.drop_duplicates()
+
+# renomear
+df_renomeado = df.rename(columns={'Nome':'NomeCompleto', 'Idade':'Anos'})
+
+# tipos
+df['Idade'] = df['Idade'].astype(float)
+df['Salario'] = pd.to_numeric(df['Salario'], errors='coerce')
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Operações com Dados}
+\begin{lstlisting}
+# novas colunas
+df['Bonus'] = df['Salario'] * 0.10
+df['SalarioTotal'] = df['Salario'] + df['Bonus']
+
+# coluna condicional
+df['Senioridade'] = df['Idade'].apply(lambda x: 'Sênior' if x >= 30 else 'Júnior')
+
+# remover coluna
+df = df.drop('Bonus', axis=1)  # ou: del df['Bonus']
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Ordenação}
+\begin{lstlisting}
+# ordenação
+df.sort_values('Salario')
+df.sort_values('Salario', ascending=False)
+df.sort_values(['Cidade','Idade'], ascending=[True, False])
+df.sort_index()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Agrupamento e Agregação}
+\begin{lstlisting}
+df_vendas = pd.DataFrame({
+  'Vendedor':['Ana','João','Ana','João','Maria','Maria'],
+  'Produto':['A','A','B','B','A','B'],
+  'Quantidade':[10,15,20,25,30,35],
+  'Valor':[100,150,200,250,300,350]
+})
+
+g = df_vendas.groupby('Vendedor')
+g.sum()
+g.mean()
+
+# múltiplas agregações
+agg = df_vendas.groupby('Vendedor').agg({'Quantidade':'sum', 'Valor':['mean','sum']})
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Pivot Table}
+\begin{lstlisting}
+pivot = df_vendas.pivot_table(
+  values='Valor', index='Vendedor', columns='Produto',
+  aggfunc='sum', fill_value=0
+)
+print(pivot)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Visualização (básico)}
+\begin{lstlisting}
+import matplotlib.pyplot as plt
+
+df_plot = pd.DataFrame({
+  'Mes':['Jan','Fev','Mar','Abr','Mai'],
+  'Vendas':[100,120,140,110,160],
+  'Custos':[ 80, 90,100, 85,110]
+})
+
+df_plot.plot(x='Mes', y='Vendas', kind='line')
+plt.title('Vendas Mensais')
+plt.show()
+
+df_plot.plot(x='Mes', y=['Vendas','Custos'], kind='bar')
+plt.title('Vendas vs Custos')
+plt.show()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Merge, Join e Concat}
+\begin{lstlisting}
+# concatenação
+df1 = pd.DataFrame({'A':[1,2], 'B':[3,4]})
+df2 = pd.DataFrame({'A':[5,6], 'B':[7,8]})
+pd.concat([df1, df2], ignore_index=True)
+
+# junção (merge)
+esq = pd.DataFrame({'ID':[1,2,3], 'Nome':['Ana','João','Maria']})
+dir = pd.DataFrame({'ID':[1,2,4], 'Salario':[5000,6000,7000]})
+
+pd.merge(esq, dir, on='ID')            # inner
+pd.merge(esq, dir, on='ID', how='left')
+pd.merge(esq, dir, on='ID', how='outer')
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Trabalhando com Datas}
+\begin{lstlisting}
+datas = pd.date_range('2024-01-01', periods=10, freq='D')
+df_tempo = pd.DataFrame({'Data': datas, 'Valor': range(100, 110)})
+df_tempo.set_index('Data', inplace=True)
+
+df_tempo.resample('W').mean()     # média semanal
+df_tempo.rolling(window=3).mean() # média móvel
+
+df_tempo['Ano'] = df_tempo.index.year
+df_tempo['Mes'] = df_tempo.index.month
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Dicas Rápidas}
+  \begin{itemize}
+    \item Prefira \textbf{vetorização} a loops explícitos
+    \item Use \texttt{query()} para filtros legíveis
+    \item Para arquivos grandes, leia em \textit{chunks}
+    \item Use tipo \texttt{category} para colunas com poucos valores distintos
+  \end{itemize}
+\vspace{0.4em}
+\begin{lstlisting}
+# filtro claro (bom)
+df.query('col1 > 10 and col2 < 20')
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Recursos Úteis}
+  \small
+  \begin{itemize}
+    \item Documentação Oficial: \href{https://pandas.pydata.org}{pandas.pydata.org}
+    \item 10 Minutes to Pandas: \href{https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html}{tutorial rápido}
+    \item Cheat Sheet: \href{https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf}{referência rápida}
+    \item Kaggle Learn: \href{https://www.kaggle.com/learn/pandas}{cursos práticos}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Exercícios Práticos}
+  \begin{enumerate}
+    \item Crie um DataFrame com 5 produtos (nome, preço, quantidade) e calcule o valor total do estoque.
+    \item Leia um CSV, limpe valores faltantes, agrupe por categoria e crie um gráfico de barras.
+    \item Faça merge de dois DataFrames, crie uma tabela dinâmica (pivot) e exporte para Excel.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \centering
+  \Large Obrigado! \\
+  \vspace{0.5em}
+  \normalsize Perguntas?
+\end{frame}
+
+\end{document}
